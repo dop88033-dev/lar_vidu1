@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
+class ProductCategory extends Model
+{
+    use HasFactory;
+
+    protected $table = 'product_categories';
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'image',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    /**
+     * Tự động tạo slug nếu chưa có
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($category) {
+            if (empty($category->slug) && !empty($category->name)) {
+                $category->slug = Str::slug($category->name);
+            }
+        });
+    }
+}
