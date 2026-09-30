@@ -165,5 +165,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'update'  => 'admin.users.update',
         'destroy' => 'admin.users.destroy',
     ]);
+    // Health Check Route cho Render
+Route::get('/up', function () {
+    return response('OK', 200);
+});
+
+// Route xóa sạch config cache trực tiếp
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    return 'Config and application cache cleared successfully!';
+});
 
 });
