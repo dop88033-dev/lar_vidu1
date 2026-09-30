@@ -176,5 +176,14 @@ Route::get('/clear-cache', function () {
     \Illuminate\Support\Facades\Artisan::call('cache:clear');
     return 'Config and application cache cleared successfully!';
 });
+// Route nạp dữ liệu mẫu trực tiếp
+Route::get('/run-seed', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        return 'Seed chạy thành công: <br><pre>' . \Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Lỗi khi seed: ' . $e->getMessage();
+    }
+});
 
 });
