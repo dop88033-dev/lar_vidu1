@@ -346,8 +346,8 @@
         </div>
     </footer>
 
-    <!-- JavaScript Dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- JavaScript Dependencies: Chỉ nạp DUY NHẤT một bộ thư viện chuẩn -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Cart & Variant Logic JavaScript -->
@@ -409,7 +409,6 @@
                 `;
             }
 
-            // Save active details
             currentVModalProduct.activePrice = initialPrice;
             currentVModalProduct.activeStock = initialStock;
             currentVModalProduct.activeImage = initialImage;
@@ -423,19 +422,17 @@
                 ? `<img src="${activeImg}" class="rounded shadow-sm" style="width:65px; height:65px; object-fit:cover;">`
                 : `<div class="rounded bg-secondary text-white d-flex align-items-center justify-content-center" style="width:65px; height:65px;"><i class="fas fa-box fa-2x"></i></div>`;
 
-            // Append stock indicator div
             listHtml += `<div id="vmodal-stock-indicator" class="w-100 mt-1"></div>`;
             listContainer.innerHTML = listHtml;
 
-            // Render correct stock indicator
             updateVModalStockIndicator();
 
+            // Mở modal an toàn với cả jQuery và Bootstrap 4
             $('#variantModal').modal('show');
         }
 
         function updateVModalStockIndicator() {
             const indicator = document.getElementById('vmodal-stock-indicator');
-            const qtyInput = document.getElementById('vmodal-qty');
             if (!indicator || !currentVModalProduct) return;
             
             const stock = currentVModalProduct.activeStock;
@@ -463,7 +460,6 @@
 
             selectedVariant = variantName;
 
-            // Update to selected variant properties
             if (currentVModalVariants && currentVModalVariants[index]) {
                 const item = currentVModalVariants[index];
                 let price = currentVModalProduct.price;
@@ -764,6 +760,7 @@
             renderCartModal();
         });
     </script>
+
     @auth
     <style>
         #chat-box {
@@ -831,8 +828,6 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggleBtn = document.getElementById("chat-toggle");
@@ -842,7 +837,7 @@
         const input = document.getElementById("chat-input");
         const chatBox = document.getElementById("chat-messages");
 
-        if (!toggleBtn) return; // Nếu khách chưa đăng nhập thì không chạy script chat
+        if (!toggleBtn) return;
 
         // --- MỞ / ĐÓNG CHAT ---
         toggleBtn.onclick = () => {
@@ -874,7 +869,7 @@
                         `;
                     });
                     chatBox.innerHTML = html;
-                    chatBox.scrollTop = chatBox.scrollHeight; // Tự động cuộn xuống cuối
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 })
                 .catch(err => console.error("Lỗi tải tin nhắn:", err));
         }
@@ -884,7 +879,6 @@
             let message = input.value.trim();
             if (message === "") return;
 
-            // Vô hiệu hóa input/button khi đang gửi để tránh gửi lặp
             input.disabled = true;
             sendBtn.disabled = true;
 
@@ -903,7 +897,7 @@
                 input.disabled = false;
                 sendBtn.disabled = false;
                 input.focus();
-                loadMessages(); // Cập nhật lại khung chat ngay lập tức
+                loadMessages();
             })
             .catch(err => {
                 console.error("Lỗi gửi tin:", err);
@@ -912,10 +906,8 @@
             });
         }
 
-        // Sự kiện Click nút Gửi
         sendBtn.onclick = sendMessage;
 
-        // Sự kiện nhấn phím Enter
         input.addEventListener("keypress", function(e) {
             if (e.key === "Enter") {
                 sendMessage();
@@ -931,6 +923,7 @@
     });
     </script>
     @endauth
+
     @yield('scripts')
 </body>
 </html>
