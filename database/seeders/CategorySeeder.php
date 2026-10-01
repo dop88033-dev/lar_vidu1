@@ -4,17 +4,19 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // Tắt kiểm tra khóa ngoại để dọn sạch dữ liệu cũ an toàn
+        // 1. Tắt khóa ngoại và xóa sạch các bản ghi cũ trong bảng categories
         Schema::disableForeignKeyConstraints();
-        Category::truncate();
+        DB::table('categories')->delete();
         Schema::enableForeignKeyConstraints();
 
+        // 2. Danh sách 10 sản phẩm bóng bàn mẫu
         $products = [
             ['name' => 'Butterfly Harimoto Innerforce ALC CS', 'category_name' => 'Cốt vợt', 'price' => 3000000, 'quantity' => 10],
             ['name' => 'Butterfly Addoy 1000', 'category_name' => 'Vợt bóng bàn', 'price' => 550000, 'quantity' => 20],
@@ -28,8 +30,14 @@ class CategorySeeder extends Seeder
             ['name' => 'Keo tăng lực dán vợt Haifu Seamoon', 'category_name' => 'Phụ kiện', 'price' => 320000, 'quantity' => 18],
         ];
 
+        // 3. Dùng forceFill để vượt qua rào cản $fillable
         foreach ($products as $item) {
-            Category::create($item);
+            $cat = new Category();
+            $cat->forceFill(array_merge($item, [
+                'is_active' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]))->save();
         }
     }
 }
