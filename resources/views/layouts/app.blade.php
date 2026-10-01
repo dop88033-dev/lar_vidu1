@@ -597,7 +597,7 @@
                 }
                 item.quantity += delta;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(i => (i.itemKey && i.itemKey != itemKey) || i.id != itemKey);
+                    cart = cart.filter(i => String(i.itemKey || i.id) !== String(itemKey));
                 }
                 saveCart(cart);
             }
@@ -605,7 +605,7 @@
 
         function removeFromCart(itemKey) {
             let cart = getCart();
-            cart = cart.filter(i => (i.itemKey && i.itemKey != itemKey) || i.id != itemKey);
+            cart = cart.filter(i => String(i.itemKey || i.id) !== String(itemKey));
             saveCart(cart);
             showToastNotification('Đã xóa sản phẩm khỏi giỏ hàng.');
         }
