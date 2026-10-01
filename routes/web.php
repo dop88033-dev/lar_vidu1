@@ -175,3 +175,12 @@ Route::get('/run-seed', function () {
         return 'Lỗi khi seed: ' . $e->getMessage();
     }
 });
+// Route tự động xác thực email cho user đang đăng nhập
+Route::get('/verify-me', function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        $user->forceFill(['email_verified_at' => now()])->save();
+        return redirect('/user/checkout');
+    }
+    return 'Vui lòng đăng nhập trước khi xác thực.';
+});
