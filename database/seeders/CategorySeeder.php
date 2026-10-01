@@ -10,20 +10,23 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $products = [
-            'Cốt vợt Butterfly Viscaria FL',
-            'Cốt vợt Stiga Clipper CR',
-            'Cốt vợt DHS Fang Bo Carbon B2X',
-            'Mặt vợt Butterfly Tenergy 05',
-            'Mặt vợt Butterfly Dignics 09C',
-            'Mặt vợt DHS Hurricane 3 Neo Tỉnh',
-            'Hộp 3 quả bóng bàn DHS 3 sao D40+',
-            'Hộp 6 quả bóng Nittaku Premium 40+',
-            'Keo tăng lực dán vợt Haifu Seamoon',
-            'Bao vợt bóng bàn Mizuno đệm dày',
+            ['name' => 'Butterfly Harimoto Innerforce ALC CS', 'category_name' => 'Cốt vợt', 'price' => 3000000, 'quantity' => 10],
+            ['name' => 'Butterfly Addoy 1000', 'category_name' => 'Vợt bóng bàn', 'price' => 550000, 'quantity' => 20],
+            ['name' => 'Máy bắn bóng bàn Khổng Tử 01', 'category_name' => 'Phụ kiện', 'price' => 15000000, 'quantity' => 5],
+            ['name' => 'BÓNG NITTAKU 3 STAR 40+ PREMIUM CLEAN', 'category_name' => 'Bóng bàn', 'price' => 230000, 'quantity' => 50],
+            ['name' => 'Cây nhặt bóng đa năng', 'category_name' => 'Phụ kiện', 'price' => 390000, 'quantity' => 15],
+            ['name' => 'Băng Cổ Tay NL Wristband 2', 'category_name' => 'Phụ kiện', 'price' => 180000, 'quantity' => 30],
+            ['name' => 'Cốt vợt Stiga Clipper CR', 'category_name' => 'Cốt vợt', 'price' => 1450000, 'quantity' => 12],
+            ['name' => 'Mặt vợt Butterfly Tenergy 05', 'category_name' => 'Mặt vợt', 'price' => 1500000, 'quantity' => 25],
+            ['name' => 'Hộp bóng bàn DHS 3 sao D40+', 'category_name' => 'Bóng bàn', 'price' => 80000, 'quantity' => 40],
+            ['name' => 'Keo tăng lực dán vợt Haifu Seamoon', 'category_name' => 'Phụ kiện', 'price' => 320000, 'quantity' => 18],
         ];
 
-        foreach ($products as $name) {
-            Category::firstOrCreate(['name' => $name]);
+        foreach ($products as $item) {
+            Category::firstOrCreate(
+                ['name' => $item['name']],
+                $item
+            );
         }
     }
 }
