@@ -4,11 +4,17 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
+        // Tắt kiểm tra khóa ngoại để dọn sạch dữ liệu cũ an toàn
+        Schema::disableForeignKeyConstraints();
+        Category::truncate();
+        Schema::enableForeignKeyConstraints();
+
         $products = [
             ['name' => 'Butterfly Harimoto Innerforce ALC CS', 'category_name' => 'Cốt vợt', 'price' => 3000000, 'quantity' => 10],
             ['name' => 'Butterfly Addoy 1000', 'category_name' => 'Vợt bóng bàn', 'price' => 550000, 'quantity' => 20],
@@ -23,10 +29,7 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($products as $item) {
-            Category::firstOrCreate(
-                ['name' => $item['name']],
-                $item
-            );
+            Category::create($item);
         }
     }
 }
