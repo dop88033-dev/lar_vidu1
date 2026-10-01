@@ -20,10 +20,10 @@ class AdminUserSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => 'user@gmail.com'],
+            ['email' => 'pt25101006@gmail.com'],
             [
-                'name' => 'Khách hàng Demo',
-                'password' => Hash::make('12345678'),
+                'name' => 'Đỗ Thu Phương',
+                'password' => Hash::make('Phuong.25'),
                 'role' => 'customer',
             ]
         );
