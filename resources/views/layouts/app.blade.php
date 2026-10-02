@@ -765,17 +765,63 @@
     <style>
         #chat-box {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
+            bottom: 20px;
+            right: 20px;
             z-index: 9999;
         }
+
+        #chat-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 210px;
+            height: 64px;
+            padding: 0 18px 0 12px;
+            border: none;
+            border-radius: 18px 18px 18px 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            box-shadow: 0 14px 24px rgba(15, 23, 42, 0.28);
+            font-size: 16px;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #chat-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 28px rgba(15, 23, 42, 0.32);
+        }
+
+        #chat-toggle .chat-avatar {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            color: #ffffff;
+            font-size: 18px;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+        }
+
+        #chat-toggle .chat-label {
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
         #chat-popup {
             width: 330px;
             height: 430px;
             display: flex;
             flex-direction: column;
             border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
         }
+
         #chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -785,6 +831,7 @@
             flex-direction: column;
             gap: 8px;
         }
+
         .message-row {
             padding: 8px 12px;
             border-radius: 12px;
@@ -793,12 +840,14 @@
             line-height: 1.4;
             word-break: break-word;
         }
+
         .user-msg {
             margin-left: auto;
             background-color: #6366f1;
             color: #ffffff;
             border-bottom-right-radius: 2px;
         }
+
         .admin-msg {
             margin-right: auto;
             background-color: #f1f5f9;
@@ -808,8 +857,13 @@
     </style>
 
     <div id="chat-box">
-        <button id="chat-toggle" class="btn btn-primary rounded-circle shadow" style="width: 55px; height: 55px; font-size: 16px;">💬 Chat</button>
-        <div id="chat-popup" class="card shadow-lg" style="display:none; border-radius: 12px;">
+        <button id="chat-toggle" type="button" class="shadow">
+            <span class="chat-avatar">
+                <i class="fas fa-comments"></i>
+            </span>
+            <span class="chat-label">Trò chuyện</span>
+        </button>
+        <div id="chat-popup" class="card shadow-lg" style="display:none;">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
                 <span class="font-weight-bold"><i class="fas fa-headset mr-1"></i> Hỗ trợ khách hàng</span>
                 <button id="chat-close" class="btn btn-sm btn-light py-0 px-2 font-weight-bold">X</button>
