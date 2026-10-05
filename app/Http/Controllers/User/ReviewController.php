@@ -29,7 +29,7 @@ class ReviewController extends Controller
             return back()->with('error', 'Bạn không có quyền đánh giá đơn hàng này.');
         }
 
-        if (!in_array($order->status, ['delivered', 'paid', 'cod_ordered'])) {
+        if ($order->status !== 'delivered' || $order->shipping_status !== 'delivered') {
             return back()->with('error', 'Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng thành công.');
         }
 

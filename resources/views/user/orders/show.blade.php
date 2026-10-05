@@ -149,7 +149,7 @@
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    @if(!in_array($order->status, ['delivered', 'paid', 'cod_ordered']))
+                    @if($order->status !== 'delivered' || $order->shipping_status !== 'delivered')
                         <div class="text-center text-muted py-3">
                             <i class="fas fa-info-circle mr-1"></i> Đánh giá sản phẩm sẽ mở sau khi đơn hàng được giao thành công.
                         </div>
