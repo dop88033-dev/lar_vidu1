@@ -107,6 +107,9 @@
                 @forelse($orders as $order)
                     @php
                         $isDelivering = in_array($order->status, ['shipping', 'delivering']) || in_array($order->shipping_status, ['delivering', 'picked', 'transporting']);
+                        $isCompleted = $order->status === 'delivered' || $order->shipping_status === 'delivered';
+                        $isCancelled = $order->status === 'cancelled' || $order->shipping_status === 'cancelled';
+                        $cannotCancel = $isDelivering || $isCompleted || $isCancelled;
                     @endphp
                     <tr>
                         <td class="font-weight-bold text-dark">
@@ -145,7 +148,7 @@
                             {{-- Form chuyển trạng thái / Hủy --}}
                             <form action="{{ route('admin.orders.update_status', $order) }}" method="POST" class="d-inline-block">
                                 @csrf
-                                <select name="status" class="form-control form-control-sm font-weight-bold border-0 shadow-sm rounded px-2" style="font-size: 12px; cursor: pointer; width: auto;" onchange="this.form.submit()" {{ $order->status === 'cancelled' ? 'disabled title="Đơn hàng đã hủy không thể đổi trạng thái"' : '' }}>
+                                <select name="status" class="form-control form-control-sm font-weight-bold border-0 shadow-sm rounded px-2" style="font-size: 12px; cursor: pointer; width: auto;" onchange="this.form.submit()" {{ ($isCancelled || $isCompleted) ? 'disabled title="Đơn hàng đã ' . ($isCancelled ? 'hủy' : 'thành công') . ' không thể đổi trạng thái"' : '' }}>
                                     <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>⏳ Chờ xử lý</option>
                                     <option value="packaged" {{ $order->status === 'packaged' ? 'selected' : '' }}>📦 Chờ lấy / Đóng gói</option>
                                     <option value="shipping" {{ $order->status === 'shipping' ? 'selected' : '' }}>🚚 Đang giao hàng</option>
@@ -162,7 +165,7 @@
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-outline-purple font-weight-bold mr-1">
                                 <i class="fas fa-eye mr-1"></i> Xem
                             </a>
-                            @if(!$isDelivering && $order->status !== 'cancelled')
+                            @if(!$cannotCancel)
                                 <form action="{{ route('admin.orders.update_status', $order) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn HỦY đơn hàng #{{ $order->id }}?');">
                                     @csrf
                                     <input type="hidden" name="status" value="cancelled">
@@ -171,7 +174,7 @@
                                     </button>
                                 </form>
                             @else
-                                <button class="btn btn-sm btn-light text-muted font-weight-bold mr-1" disabled title="Đơn hàng đang giao không được phép hủy">
+                                <button class="btn btn-sm btn-light text-muted font-weight-bold mr-1" disabled title="{{ $isCompleted ? 'Đơn hàng đã giao thành công không thể hủy' : ($isCancelled ? 'Đơn hàng đã bị hủy' : 'Đơn hàng đang giao không được phép hủy') }}">
                                     <i class="fas fa-ban"></i> Không thể hủy
                                 </button>
                             @endif

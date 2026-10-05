@@ -106,18 +106,21 @@
                                         <i class="fas fa-eye mr-1"></i> Xem chi tiết
                                     </a>
 
-                                    @if($order->status !== 'paid' && $order->status !== 'cancelled')
-                                        <a href="{{ route('user.orders.edit', $order) }}" class="btn btn-outline-warning btn-sm font-weight-bold rounded-lg mr-1 mb-1" style="font-size: 12px;">
-                                            <i class="fas fa-pen mr-1"></i> Sửa
-                                        </a>
+                                     @php
+                                         $cannotModifyUser = in_array($order->status, ['paid', 'cancelled', 'delivered', 'shipping', 'packaged']) || $order->shipping_status === 'delivered';
+                                     @endphp
+                                     @if(!$cannotModifyUser)
+                                         <a href="{{ route('user.orders.edit', $order) }}" class="btn btn-outline-warning btn-sm font-weight-bold rounded-lg mr-1 mb-1" style="font-size: 12px;">
+                                             <i class="fas fa-pen mr-1"></i> Sửa
+                                         </a>
 
-                                        <form action="{{ route('user.orders.cancel', $order) }}" method="POST" class="d-inline-block mb-1 mr-1" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #{{ $order->id }}?');">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm font-weight-bold rounded-lg" style="font-size: 12px;">
-                                                <i class="fas fa-times-circle mr-1"></i> Hủy đơn
-                                            </button>
-                                        </form>
-                                    @endif
+                                         <form action="{{ route('user.orders.cancel', $order) }}" method="POST" class="d-inline-block mb-1 mr-1" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #{{ $order->id }}?');">
+                                             @csrf
+                                             <button type="submit" class="btn btn-outline-danger btn-sm font-weight-bold rounded-lg" style="font-size: 12px;">
+                                                 <i class="fas fa-times-circle mr-1"></i> Hủy đơn
+                                             </button>
+                                         </form>
+                                     @endif
 
                                      @if(empty($order->ghn_order_code) && in_array($order->status, ['paid', 'cod_ordered']))
                                          <form action="{{ route('user.orders.push_ghn', $order) }}" method="POST" class="d-inline-block mb-1 mr-1">

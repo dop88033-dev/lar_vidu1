@@ -322,6 +322,10 @@ class OrderController extends Controller
             return back()->with('error', 'Đơn hàng này đã bị hủy từ trước.');
         }
 
+        if ($order->status === 'delivered' || $order->shipping_status === 'delivered') {
+            return back()->with('error', 'Đơn hàng đã giao thành công không thể hủy.');
+        }
+
         if ($order->status === 'paid') {
             return back()->with('error', 'Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ.');
         }
@@ -344,6 +348,10 @@ class OrderController extends Controller
             return redirect()->route('user.orders.index')->with('error', 'Không thể chỉnh sửa đơn hàng đã bị hủy.');
         }
 
+        if ($order->status === 'delivered' || $order->shipping_status === 'delivered') {
+            return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đã giao thành công không thể tự chỉnh sửa.');
+        }
+
         if ($order->status === 'paid') {
             return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đã thanh toán không thể tự chỉnh sửa.');
         }
@@ -357,7 +365,7 @@ class OrderController extends Controller
             abort(403);
         }
 
-        if ($order->status === 'cancelled' || $order->status === 'paid') {
+        if (in_array($order->status, ['cancelled', 'paid', 'delivered']) || $order->shipping_status === 'delivered') {
             return redirect()->route('user.orders.index')->with('error', 'Không thể cập nhật đơn hàng này.');
         }
 

@@ -161,6 +161,11 @@ class OrderController extends Controller
             return back()->with('error', 'Đơn hàng này đã bị HỦY, không thể chuyển sang trạng thái khác!');
         }
 
+        // Nếu đơn hàng đã THÀNH CÔNG (đã giao), không cho phép đổi sang bất kỳ trạng thái nào khác
+        if ($order->status === 'delivered' || $order->shipping_status === 'delivered') {
+            return back()->with('error', 'Đơn hàng đã giao THÀNH CÔNG, không thể chuyển sang trạng thái khác!');
+        }
+
         // Nếu chuyển sang trạng thái HỦY, kiểm tra nếu đơn hàng đang giao thì không cho phép
         if ($newStatus === 'cancelled') {
             if (in_array($order->status, ['shipping', 'delivering']) || in_array($order->shipping_status, ['delivering', 'picked', 'transporting'])) {

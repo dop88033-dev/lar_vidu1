@@ -13,10 +13,14 @@
         </h3>
     </div>
     <div class="d-flex align-items-center gap-2">
+        @php
+            $isCompleted = $order->status === 'delivered' || $order->shipping_status === 'delivered';
+            $isCancelled = $order->status === 'cancelled' || $order->shipping_status === 'cancelled';
+        @endphp
         <form action="{{ route('admin.orders.update_status', $order) }}" method="POST" class="d-flex align-items-center">
             @csrf
             <label class="font-weight-bold text-dark mb-0 mr-2 small text-uppercase">Trạng thái:</label>
-            <select name="status" class="form-control form-control-sm font-weight-bold mr-2" style="width: auto;" onchange="this.form.submit()" {{ $order->status === 'cancelled' ? 'disabled title="Đơn hàng đã hủy không thể đổi trạng thái"' : '' }}>
+            <select name="status" class="form-control form-control-sm font-weight-bold mr-2" style="width: auto;" onchange="this.form.submit()" {{ ($isCancelled || $isCompleted) ? 'disabled title="Đơn hàng đã ' . ($isCancelled ? 'hủy' : 'thành công') . ' không thể đổi trạng thái"' : '' }}>
                 <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>⏳ Đang xử lý</option>
                 <option value="packaged" {{ $order->status === 'packaged' ? 'selected' : '' }}>📦 Đã đóng gói</option>
                 <option value="shipping" {{ $order->status === 'shipping' ? 'selected' : '' }}>🚚 Đang vận chuyển</option>
