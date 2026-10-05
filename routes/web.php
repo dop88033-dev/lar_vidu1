@@ -10,6 +10,7 @@ use App\Http\Controllers\UserCategoryController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\GHNWebhookController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\User\MomoController;
 use App\Http\Controllers\User\ChatController as UserChatController;
@@ -42,6 +43,7 @@ Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('car
 */
 Route::post('/payment/momo/ipn', [MomoController::class, 'ipn'])->name('payment.momo.ipn');
 Route::get('/payment/momo/callback', [MomoController::class, 'callback'])->name('user.payment.momo.callback');
+Route::post('/ghn/webhook', [GHNWebhookController::class, 'handle'])->name('ghn.webhook');
 
 // User Payment & Order Routes (Auth & Verified)
 Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(function () {

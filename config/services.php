@@ -37,6 +37,7 @@ return [
         'shop_id'          => env('GHN_SHOP_ID'),
         'verify_ssl'       => env('GHN_VERIFY_SSL', true),
         'from_district_id' => env('GHN_FROM_DISTRICT_ID'),
+        'webhook_secret'   => env('GHN_WEBHOOK_SECRET'),
     ],
 
     'momo' => [
