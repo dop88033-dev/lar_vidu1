@@ -192,7 +192,25 @@ class OrderController extends Controller
             'shipping_status' => $shippingStatus,
         ]);
 
-        return back()->with('success', 'Đã cập nhật trạng thái đơn hàng #' . $order->id . ' thành công!');
+        $successMessage = 'Đã cập nhật trạng thái đơn hàng #' . $order->id . ' thành công!';
+        $previousUrl = url()->previous();
+        $previousPath = parse_url($previousUrl, PHP_URL_PATH);
+        $previousQuery = [];
+        parse_str((string) parse_url($previousUrl, PHP_URL_QUERY), $previousQuery);
+
+        $isFilteredByStatus = ($previousQuery['tab'] ?? 'all') !== 'all'
+            || isset($previousQuery['status'])
+            || isset($previousQuery['shipping_status']);
+
+        if ($previousPath === route('admin.orders.index', [], false) && $isFilteredByStatus) {
+            unset($previousQuery['status'], $previousQuery['shipping_status']);
+            $previousQuery['tab'] = 'all';
+            $previousQuery['page'] = 1;
+
+            return redirect()->route('admin.orders.index', $previousQuery)->with('success', $successMessage);
+        }
+
+        return back()->with('success', $successMessage);
     }
 
     /**
