@@ -44,12 +44,14 @@ chown -R www-data:www-data storage bootstrap/cache
 
 su-exec www-data php artisan config:cache
 
-case "${RUN_MIGRATIONS:-true}" in
+# Giữ nguyên dữ liệu CSDL: Mặc định không chạy migrate khi khởi động
+case "${RUN_MIGRATIONS:-false}" in
     true) su-exec www-data php artisan migrate --force --no-interaction ;;
     false) ;;
     *) echo "RUN_MIGRATIONS must be true or false" >&2; exit 1 ;;
 esac
 
+# Mặc định không seed lại dữ liệu để tránh trùng lặp
 case "${RUN_SEEDERS:-false}" in
     true) su-exec www-data php artisan db:seed --force --no-interaction ;;
     false) ;;
