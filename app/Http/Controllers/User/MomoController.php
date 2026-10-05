@@ -61,7 +61,27 @@ class MomoController extends Controller
             ? 'Thanh toán MoMo thành công! Vận đơn GHN đã được khởi tạo.'
             : 'Thanh toán thành công! Đơn hàng đang chờ tạo vận đơn GHN.';
 
-        return redirect()->route('user.orders.index')->with('success', $message);
+        $orderedCartItems = [];
+        if (in_array($result, ['created', 'already_created', 'failed', 'processing'], true)) {
+            $transaction = PaymentTransaction::where('gateway', 'momo')
+                ->where('gateway_order_id', $request->input('orderId'))
+                ->first();
+            $order = $transaction ? Order::with('items')->find($transaction->order_id) : null;
+
+            if ($order) {
+                $orderedCartItems = $order->items->map(function ($item) {
+                    return [
+                        'id' => $item->product_id,
+                        'name' => $item->product_name,
+                        'variant' => $item->variant ?? 'Mặc định',
+                    ];
+                })->all();
+            }
+        }
+
+        return redirect()->route('user.orders.index')
+            ->with('success', $message)
+            ->with('ordered_cart_items', $orderedCartItems);
     }
 
     public function ipn(Request $request, GHNOrderService $ghnOrders, MomoService $momo)

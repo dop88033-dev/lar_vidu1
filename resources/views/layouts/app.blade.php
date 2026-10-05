@@ -755,7 +755,18 @@
             }, 3000);
         }
 
+        const orderedCartItems = @json(session('ordered_cart_items', []));
+
         document.addEventListener('DOMContentLoaded', function() {
+            if (Array.isArray(orderedCartItems) && orderedCartItems.length > 0) {
+                const remainingCart = getCart().filter(cartItem => !orderedCartItems.some(orderedItem => {
+                    const sameProduct = orderedItem.id !== null && orderedItem.id !== undefined
+                        ? String(cartItem.id) === String(orderedItem.id)
+                        : cartItem.name === orderedItem.name;
+                    return sameProduct && (cartItem.variant || 'Mặc định') === (orderedItem.variant || 'Mặc định');
+                }));
+                saveCart(remainingCart);
+            }
             updateCartBadge();
             renderCartModal();
         });

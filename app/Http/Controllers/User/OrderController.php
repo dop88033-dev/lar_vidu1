@@ -244,6 +244,14 @@ class OrderController extends Controller
                 return $order;
             });
 
+            $orderedCartItems = collect($cart)->map(function ($item, $key) {
+                return [
+                    'id' => $item['id'] ?? (is_numeric($key) ? $key : null),
+                    'name' => $item['name'] ?? null,
+                    'variant' => $item['variant'] ?? 'Mặc định',
+                ];
+            })->values()->all();
+
             // Xóa session giỏ hàng
             session()->forget('cart');
 
@@ -280,7 +288,8 @@ class OrderController extends Controller
                     ]);
 
                     return redirect()->route('user.orders.index')
-                        ->with('success', 'Đặt hàng thành công! Mã vận đơn GHN: ' . $ghnOrderResponse['data']['order_code']);
+                        ->with('success', 'Đặt hàng thành công! Mã vận đơn GHN: ' . $ghnOrderResponse['data']['order_code'])
+                        ->with('ordered_cart_items', $orderedCartItems);
                 }
 
                 Log::warning('GHN COD Order Not Success: ', $ghnOrderResponse ?? []);
@@ -292,7 +301,8 @@ class OrderController extends Controller
             $order->update(['status' => 'cod_ordered']);
 
             return redirect()->route('user.orders.index')
-                ->with('success', 'Đặt hàng thành công! Đơn hàng đang được hệ thống xử lý.');
+                ->with('success', 'Đặt hàng thành công! Đơn hàng đang được hệ thống xử lý.')
+                ->with('ordered_cart_items', $orderedCartItems);
         } catch (\Throwable $e) {
             Log::error('Process Payment Failed: ' . $e->getMessage(), ['exception' => $e]);
             return back()->withInput()->with('error', 'Thanh toán thất bại: ' . $e->getMessage());
