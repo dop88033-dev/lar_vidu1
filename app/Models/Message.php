@@ -12,6 +12,7 @@ class Message extends Model
     protected $fillable = [
         'sender_id',
         'receiver_id',
+        'order_id',
         'content',
         'is_read'
     ];
@@ -24,5 +25,10 @@ class Message extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

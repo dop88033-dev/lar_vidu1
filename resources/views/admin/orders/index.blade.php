@@ -162,6 +162,9 @@
                             </form>
                         </td>
                         <td class="text-right">
+                            <button type="button" onclick="if(typeof openAdminChatWithUserAndOrder === 'function') openAdminChatWithUserAndOrder({{ $order->user_id }}, {{ $order->id }});" class="btn btn-sm btn-dark font-weight-bold mr-1" title="Trò chuyện về đơn hàng #{{ $order->id }}">
+                                <i class="fas fa-comments mr-1"></i> Chat
+                            </button>
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-outline-purple font-weight-bold mr-1">
                                 <i class="fas fa-eye mr-1"></i> Xem
                             </a>

@@ -21,6 +21,9 @@
             <span class="text-muted small">Ngày đặt: {{ $order->created_at ? $order->created_at->format('H:i:s d/m/Y') : '' }}</span>
         </div>
         <div class="d-flex align-items-center">
+            <button type="button" onclick="if(typeof openChatWithOrder === 'function') openChatWithOrder({{ $order->id }});" class="btn btn-dark btn-sm font-weight-bold rounded-lg mr-2">
+                <i class="fas fa-comments mr-1"></i> Trò chuyện về đơn hàng
+            </button>
             @if($order->status !== 'paid' && $order->status !== 'cancelled')
                 <a href="{{ route('user.orders.edit', $order) }}" class="btn btn-outline-warning btn-sm font-weight-bold rounded-lg mr-2">
                     <i class="fas fa-pen mr-1"></i> Sửa thông tin

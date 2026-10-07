@@ -63,6 +63,7 @@ Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(fu
 
     Route::post('/chat/send', [UserChatController::class, 'send'])->name('chat.send');
     Route::get('/chat/messages', [UserChatController::class, 'getMessages'])->name('chat.messages');
+    Route::get('/chat/orders', [UserChatController::class, 'getOrders'])->name('chat.orders');
     Route::post('/reviews', [UserReviewController::class, 'store'])->name('reviews.store');
 });
 
@@ -126,6 +127,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/admin/chat/users', [AdminChatController::class, 'getUsers'])->name('admin.chat.users');
     Route::get('/admin/chat/messages/{userId}', [AdminChatController::class, 'getMessages'])->name('admin.chat.messages');
+    Route::get('/admin/chat/user-orders/{userId}', [AdminChatController::class, 'getUserOrders'])->name('admin.chat.user-orders');
     Route::post('/admin/chat/send', [AdminChatController::class, 'send'])->name('admin.chat.send');
 
     Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');

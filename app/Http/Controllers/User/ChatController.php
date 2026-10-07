@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -17,6 +18,7 @@ class ChatController extends Controller
     {
         // 1. Lấy nội dung từ request JSON
         $messageText = $request->input('message');
+        $orderId = $request->input('order_id');
 
         // 2. Kiểm tra nội dung trống
         if (empty(trim($messageText))) {
@@ -24,21 +26,28 @@ class ChatController extends Controller
         }
 
         // 3. Xác định Admin nhận tin
-        // Ưu tiên tìm user có role là admin, nếu không thấy thì mặc định lấy ID 1
         $admin = User::where('role', 'admin')->first();
         $receiverId = $admin ? $admin->id : 1;
+
+        // Nếu có truyền order_id, kiểm tra xem đơn hàng đó có thuộc về user không
+        if (!empty($orderId)) {
+            $order = Order::where('id', $orderId)->where('user_id', Auth::id())->first();
+            if (!$order) {
+                $orderId = null;
+            }
+        }
 
         try {
             // 4. Lưu tin nhắn vào Database
             $message = Message::create([
                 'sender_id' => Auth::id(),
                 'receiver_id' => $receiverId,
+                'order_id' => $orderId ?: null,
                 'content' => $messageText,
                 'is_read' => false,
             ]);
 
-            // Trả về dữ liệu tin nhắn vừa tạo để Frontend hiển thị ngay (nếu cần)
-            return response()->json($message);
+            return response()->json($message->load('order'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Không thể gửi tin nhắn: ' . $e->getMessage()], 500);
         }
@@ -51,25 +60,34 @@ class ChatController extends Controller
     {
         $userId = Auth::id();
 
-        // Tìm Admin để lọc tin nhắn qua lại
         $admin = User::where('role', 'admin')->first();
         $adminId = $admin ? $admin->id : 1;
 
-        // Lấy toàn bộ hội thoại giữa 2 người
-        $messages = Message::with(['sender', 'receiver'])
+        $messages = Message::with(['sender', 'receiver', 'order'])
             ->where(function ($q) use ($userId, $adminId) {
-                // Tin nhắn User gửi cho Admin
                 $q->where('sender_id', $userId)
                   ->where('receiver_id', $adminId);
             })
             ->orWhere(function ($q) use ($userId, $adminId) {
-                // Tin nhắn Admin phản hồi cho User
                 $q->where('sender_id', $adminId)
                   ->where('receiver_id', $userId);
             })
-            ->orderBy('created_at', 'asc') // Sắp xếp theo thứ tự thời gian tăng dần
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return response()->json($messages);
+    }
+
+    /**
+     * Lấy danh sách đơn hàng của người dùng hiện tại để chọn khi chat
+     */
+    public function getOrders()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->select('id', 'total_price', 'status', 'created_at')
+            ->get();
+
+        return response()->json($orders);
     }
 }

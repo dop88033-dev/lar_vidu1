@@ -393,6 +393,13 @@
                 <div class="p-2 text-center text-muted"><small>Đang tải danh sách...</small></div>
             </div>
 
+            <div id="admin-chat-order-bar" class="px-2 py-1 bg-light border-bottom align-items-center justify-content-between d-none">
+                <small class="font-weight-bold text-muted mr-1" style="font-size: 11px;"><i class="fas fa-box text-indigo"></i> Đơn hàng:</small>
+                <select id="admin-chat-order-select" class="form-control form-control-sm border rounded bg-white px-1 py-0" style="font-size: 11.5px; height: 26px;">
+                    <option value="">-- Tất cả / Không chọn --</option>
+                </select>
+            </div>
+
             <div id="chat-messages">
                 <div class="text-center mt-5 text-muted"><small>Chọn một khách hàng để xem tin nhắn</small></div>
             </div>
@@ -417,6 +424,8 @@
         const chatToggle = document.getElementById("chat-toggle");
         const chatClose = document.getElementById("chat-close");
         const sendBtn = document.getElementById("send-btn");
+        const orderBar = document.getElementById("admin-chat-order-bar");
+        const orderSelect = document.getElementById("admin-chat-order-select");
 
         if (!chatToggle) return;
 
@@ -432,13 +441,13 @@
         };
 
         // 1. Load danh sách User đã từng nhắn tin
-        function loadUsers() {
+        function loadUsers(autoSelectUserId = null, autoSelectOrderId = null) {
             fetch("{{ route('admin.chat.users') }}")
                 .then(res => res.json())
                 .then(users => {
                     let html = "";
                     users.forEach(user => {
-                        let activeClass = (currentUserId == user.id) ? 'active' : '';
+                        let activeClass = (currentUserId == user.id || autoSelectUserId == user.id) ? 'active' : '';
                         html += `<div class="user-item ${activeClass}" data-id="${user.id}">
                             ${user.name}
                         </div>`;
@@ -453,18 +462,53 @@
                             selectUser(uId, this);
                         });
                     });
+
+                    if (autoSelectUserId) {
+                        const targetItem = userListEl.querySelector(`.user-item[data-id="${autoSelectUserId}"]`);
+                        selectUser(autoSelectUserId, targetItem, autoSelectOrderId);
+                    }
                 })
                 .catch(err => console.error("Lỗi tải danh sách user:", err));
         }
 
         // 2. Chọn User để chat
-        function selectUser(userId, element) {
+        function selectUser(userId, element, preselectOrderId = null) {
             currentUserId = userId;
-            // Highlight user được chọn
             document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
+
+            if (orderBar) orderBar.classList.remove('d-none');
+            loadUserOrders(userId, preselectOrderId);
             loadMessages();
         }
+
+        // --- LOAD ĐƠN HÀNG CỦA KHÁCH HÀNG ---
+        function loadUserOrders(userId, preselectOrderId = null) {
+            if (!userId) return;
+            fetch(`/admin/chat/user-orders/${userId}`)
+                .then(res => res.json())
+                .then(orders => {
+                    let html = '<option value="">-- Tất cả / Không chọn --</option>';
+                    orders.forEach(ord => {
+                        let isSel = (preselectOrderId && preselectOrderId == ord.id) ? 'selected' : '';
+                        let price = ord.total_price ? new Intl.NumberFormat('vi-VN').format(ord.total_price) + ' đ' : '';
+                        html += `<option value="${ord.id}" ${isSel}>Đơn #${ord.id} (${price})</option>`;
+                    });
+                    orderSelect.innerHTML = html;
+                    if (preselectOrderId) {
+                        orderSelect.value = preselectOrderId;
+                    }
+                })
+                .catch(err => console.error("Lỗi tải đơn hàng của khách:", err));
+        }
+
+        // --- HÀM MỞ CHAT VỚI USER & ĐƠN HÀNG CỤ THỂ DÀNH CHO ADMIN ---
+        window.openAdminChatWithUserAndOrder = function(userId, orderId = null) {
+            chatPopup.style.display = "flex";
+            chatToggle.style.display = "none";
+            loadUsers(userId, orderId);
+            chatInput.focus();
+        };
 
         // 3. Load tin nhắn của User đang được chọn
         function loadMessages() {
@@ -476,12 +520,28 @@
                     messages.forEach(msg => {
                         let senderName = msg.sender_id == "{{ Auth::id() }}" ? "Bạn" : (msg.sender ? msg.sender.name : "Khách hàng");
                         let color = msg.sender_id == "{{ Auth::id() }}" ? "#4f46e5" : "#0f172a";
-                        html += `<div class="msg-row" style="color: ${color}">
+
+                        let orderBadge = "";
+                        if (msg.order_id || msg.order) {
+                            let ordId = msg.order_id || (msg.order ? msg.order.id : '');
+                            let priceText = (msg.order && msg.order.total_price) ? new Intl.NumberFormat('vi-VN').format(msg.order.total_price) + ' đ' : '';
+                            orderBadge = `
+                                <div class="mb-1 p-1 bg-white rounded border text-dark shadow-sm" style="font-size: 11px;">
+                                    <i class="fas fa-box text-indigo mr-1"></i>
+                                    <a href="/admin/orders/${ordId}" target="_blank" class="font-weight-bold text-indigo text-decoration-none">
+                                        📦 Đơn hàng #${ordId} ${priceText ? '(' + priceText + ')' : ''}
+                                    </a>
+                                </div>
+                            `;
+                        }
+
+                        html += `<div class="msg-row mb-2" style="color: ${color}">
+                            ${orderBadge}
                             <strong>${senderName}:</strong> ${msg.content}
                         </div>`;
                     });
                     chatMessages.innerHTML = html || '<div class="text-center text-muted my-auto"><small>Chưa có tin nhắn nào</small></div>';
-                    chatMessages.scrollTop = chatMessages.scrollHeight; // Cuộn xuống cuối
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 })
                 .catch(err => console.error("Lỗi tải tin nhắn:", err));
         }
@@ -490,6 +550,8 @@
         function sendMessage() {
             let message = chatInput.value.trim();
             if (!message || !currentUserId) return;
+
+            let selectedOrderId = orderSelect ? orderSelect.value : null;
 
             chatInput.disabled = true;
             sendBtn.disabled = true;
@@ -502,7 +564,8 @@
                 },
                 body: JSON.stringify({
                     message: message,
-                    user_id: currentUserId
+                    user_id: currentUserId,
+                    order_id: selectedOrderId
                 })
             })
             .then(res => res.json())
@@ -527,7 +590,7 @@
         setInterval(() => {
             if (chatPopup.style.display === "flex") {
                 loadMessages();
-                loadUsers(); // Cập nhật danh sách nếu có người mới nhắn
+                loadUsers();
             }
         }, 3000);
     });

@@ -102,7 +102,10 @@
                                     {{ number_format($order->total_price, 0, ',', '.') }} VNĐ
                                 </div>
                                 <div class="d-flex flex-wrap justify-content-md-end gap-2 align-items-center">
-                                    <a href="{{ route('user.orders.show', $order) }}" class="btn btn-outline-purple btn-sm font-weight-bold rounded-lg mr-1 mb-1">
+                                    <button type="button" onclick="if(typeof openChatWithOrder === 'function') openChatWithOrder({{ $order->id }});" class="btn btn-dark btn-sm font-weight-bold rounded-lg mr-1 mb-1" style="font-size: 12px;">
+                                        <i class="fas fa-comments mr-1"></i> Trò chuyện
+                                    </button>
+                                    <a href="{{ route('user.orders.show', $order) }}" class="btn btn-outline-purple btn-sm font-weight-bold rounded-lg mr-1 mb-1" style="font-size: 12px;">
                                         <i class="fas fa-eye mr-1"></i> Xem chi tiết
                                     </a>
 

@@ -13,6 +13,9 @@
         </h3>
     </div>
     <div class="d-flex align-items-center gap-2">
+        <button type="button" onclick="if(typeof openAdminChatWithUserAndOrder === 'function') openAdminChatWithUserAndOrder({{ $order->user_id }}, {{ $order->id }});" class="btn btn-dark btn-sm font-weight-bold mr-2">
+            <i class="fas fa-comments mr-1"></i> Trò chuyện với khách
+        </button>
         @php
             $isCompleted = $order->status === 'delivered' || $order->shipping_status === 'delivered';
             $isCancelled = $order->status === 'cancelled' || $order->shipping_status === 'cancelled';

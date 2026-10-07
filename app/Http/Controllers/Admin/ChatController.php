@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -16,7 +17,6 @@ class ChatController extends Controller
     public function getUsers()
     {
         $adminId = Auth::id();
-        // Tìm tất cả ID của người dùng có tương tác với admin
         $userIds = Message::where('receiver_id', $adminId)
             ->orWhere('sender_id', $adminId)
             ->orderBy('created_at', 'desc')
@@ -27,10 +27,9 @@ class ChatController extends Controller
             ->unique()
             ->toArray();
 
-        // Lấy thông tin chi tiết các User đó
         return User::whereIn('id', $userIds)
             ->where('id', '!=', $adminId)
-            ->select('id', 'name')
+            ->select('id', 'name', 'email')
             ->get();
     }
 
@@ -40,7 +39,7 @@ class ChatController extends Controller
     public function getMessages($userId)
     {
         $adminId = Auth::id();
-        return Message::with('sender')
+        return Message::with(['sender', 'order'])
             ->where(function ($q) use ($userId, $adminId) {
                 $q->where('sender_id', $userId)->where('receiver_id', $adminId);
             })
@@ -52,23 +51,37 @@ class ChatController extends Controller
     }
 
     /**
+     * Lấy danh sách đơn hàng của một User cụ thể để Admin chọn hoặc tham chiếu
+     */
+    public function getUserOrders($userId)
+    {
+        $orders = Order::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->select('id', 'total_price', 'status', 'created_at')
+            ->get();
+
+        return response()->json($orders);
+    }
+
+    /**
      * Admin gửi tin nhắn phản hồi
      */
     public function send(Request $request)
     {
-        // Kiểm tra dữ liệu đầu vào
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'message' => 'required'
+            'message' => 'required',
+            'order_id' => 'nullable|exists:orders,id'
         ]);
 
         $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $request->user_id,
+            'order_id' => $request->order_id ?: null,
             'content' => $request->message,
-            'is_read' => true // Admin gửi thì mặc định là đã đọc (hoặc xử lý sau)
+            'is_read' => true
         ]);
 
-        return response()->json($message);
+        return response()->json($message->load('order'));
     }
 }

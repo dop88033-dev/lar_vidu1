@@ -879,6 +879,12 @@
                 <span class="font-weight-bold"><i class="fas fa-headset mr-1"></i> Hỗ trợ khách hàng</span>
                 <button id="chat-close" class="btn btn-sm btn-light py-0 px-2 font-weight-bold">X</button>
             </div>
+            <div class="px-2 py-1 bg-light border-bottom d-flex align-items-center justify-content-between">
+                <small class="font-weight-bold text-muted mr-1" style="font-size: 11px;"><i class="fas fa-box text-primary"></i> Đơn hàng:</small>
+                <select id="user-chat-order-select" class="form-control form-control-sm border rounded bg-white px-1 py-0" style="font-size: 11.5px; height: 26px;">
+                    <option value="">-- Tất cả / Không chọn --</option>
+                </select>
+            </div>
             <div id="chat-messages" class="card-body">
                 <small class="text-muted">Đang tải lịch sử...</small>
             </div>
@@ -901,6 +907,7 @@
         const sendBtn = document.getElementById("send-btn");
         const input = document.getElementById("chat-input");
         const chatBox = document.getElementById("chat-messages");
+        const orderSelect = document.getElementById("user-chat-order-select");
 
         if (!toggleBtn) return;
 
@@ -908,12 +915,41 @@
         toggleBtn.onclick = () => {
             chatPopup.style.display = "block";
             toggleBtn.style.display = "none";
+            loadUserOrders();
             loadMessages();
         };
 
         closeBtn.onclick = () => {
             chatPopup.style.display = "none";
             toggleBtn.style.display = "block";
+        };
+
+        // --- LOAD DANH SÁCH ĐƠN HÀNG CỦA USER ---
+        function loadUserOrders(preselectId = null) {
+            fetch("{{ route('user.chat.orders') }}")
+                .then(res => res.json())
+                .then(orders => {
+                    let html = '<option value="">-- Tất cả / Không chọn --</option>';
+                    orders.forEach(ord => {
+                        let isSel = (preselectId && preselectId == ord.id) ? 'selected' : '';
+                        let price = ord.total_price ? new Intl.NumberFormat('vi-VN').format(ord.total_price) + ' đ' : '';
+                        html += `<option value="${ord.id}" ${isSel}>Đơn #${ord.id} (${price})</option>`;
+                    });
+                    orderSelect.innerHTML = html;
+                    if (preselectId) {
+                        orderSelect.value = preselectId;
+                    }
+                })
+                .catch(err => console.error("Lỗi tải đơn hàng:", err));
+        }
+
+        // --- HÀM MỞ CHAT TỪ NÚT ĐƠN HÀNG ---
+        window.openChatWithOrder = function(orderId) {
+            chatPopup.style.display = "block";
+            toggleBtn.style.display = "none";
+            loadUserOrders(orderId);
+            loadMessages();
+            input.focus();
         };
 
         // --- LOAD TIN NHẮN ---
@@ -927,8 +963,23 @@
                     }
                     messages.forEach(msg => {
                         const isMe = msg.sender_id == "{{ Auth::id() }}";
+                        let orderBadge = "";
+                        if (msg.order_id || msg.order) {
+                            let ordId = msg.order_id || (msg.order ? msg.order.id : '');
+                            let priceText = (msg.order && msg.order.total_price) ? new Intl.NumberFormat('vi-VN').format(msg.order.total_price) + ' đ' : '';
+                            orderBadge = `
+                                <div class="mb-1 p-1 bg-white rounded border text-dark shadow-sm" style="font-size: 11px;">
+                                    <i class="fas fa-box text-primary mr-1"></i>
+                                    <a href="/user/orders/${ordId}" target="_blank" class="font-weight-bold text-primary text-decoration-none">
+                                        Đơn hàng #${ordId} ${priceText ? '(' + priceText + ')' : ''}
+                                    </a>
+                                </div>
+                            `;
+                        }
+
                         html += `
                             <div class="message-row ${isMe ? 'user-msg' : 'admin-msg'}">
+                                ${orderBadge}
                                 <strong>${isMe ? 'Bạn' : 'Admin'}:</strong> ${msg.content}
                             </div>
                         `;
@@ -944,6 +995,8 @@
             let message = input.value.trim();
             if (message === "") return;
 
+            let selectedOrderId = orderSelect ? orderSelect.value : null;
+
             input.disabled = true;
             sendBtn.disabled = true;
 
@@ -954,7 +1007,10 @@
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ 
+                    message: message,
+                    order_id: selectedOrderId
+                })
             })
             .then(res => res.json())
             .then(data => {

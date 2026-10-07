@@ -56,4 +56,10 @@ class Order extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // Đơn hàng có các tin nhắn liên quan
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }
