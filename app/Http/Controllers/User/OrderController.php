@@ -335,7 +335,7 @@ class OrderController extends Controller
     // ==========================================
     // 4. HỦY VÀ SỬA ĐƠN HÀNG (CANCEL & EDIT ORDER)
     // ==========================================
-    public function cancel(Order $order)
+    public function cancel(Order $order, GHNService $ghn)
     {
         if ($order->user_id !== Auth::id()) {
             abort(403);
@@ -351,6 +351,15 @@ class OrderController extends Controller
 
         if ($order->status === 'paid') {
             return back()->with('error', 'Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ.');
+        }
+
+        // Hủy đơn trên hệ thống GHN nếu đã có mã vận đơn
+        if (!empty($order->ghn_order_code)) {
+            try {
+                $ghn->cancelOrder([$order->ghn_order_code]);
+            } catch (\Throwable $e) {
+                Log::warning('Hủy đơn GHN thất bại: ' . $e->getMessage());
+            }
         }
 
         $order->update([
