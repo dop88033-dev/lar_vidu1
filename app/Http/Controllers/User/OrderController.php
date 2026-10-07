@@ -11,6 +11,7 @@ use App\Services\GHNOrderService;
 use App\Services\MomoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -145,7 +146,27 @@ class OrderController extends Controller
             'to_ward_code.required' => 'Vui lòng chọn Phường/Xã giao hàng.',
         ]);
 
+        $userId = Auth::id();
+        $lockKey = 'process_order_user_' . $userId;
+        $lock = Cache::lock($lockKey, 15);
+
+        if (!$lock->get()) {
+            return redirect()->route('user.orders.index')
+                ->with('warning', 'Đơn hàng của bạn đang được xử lý, vui lòng không nhấn gửi liên tục!');
+        }
+
         try {
+            // Chống đặt trùng đơn: Kiểm tra nếu trong 10 giây qua user này vừa tạo đơn
+            $recentOrder = Order::where('user_id', $userId)
+                ->where('created_at', '>=', now()->subSeconds(10))
+                ->latest()
+                ->first();
+
+            if ($recentOrder) {
+                return redirect()->route('user.orders.index')
+                    ->with('warning', 'Đơn hàng #' . $recentOrder->id . ' đã được tạo thành công trước đó. Vui lòng không đặt lại nhiều lần!');
+            }
+
             // Tự động đồng bộ giỏ hàng từ localStorage (gửi qua cart_items) vào Session nếu Session trống
             if (empty(session('cart')) && $request->has('cart_items') && !empty($request->cart_items)) {
                 $jsonItems = json_decode($request->cart_items, true);
@@ -306,6 +327,8 @@ class OrderController extends Controller
         } catch (\Throwable $e) {
             Log::error('Process Payment Failed: ' . $e->getMessage(), ['exception' => $e]);
             return back()->withInput()->with('error', 'Thanh toán thất bại: ' . $e->getMessage());
+        } finally {
+            optional($lock)->release();
         }
     }
 

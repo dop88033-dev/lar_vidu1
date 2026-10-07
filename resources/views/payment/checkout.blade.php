@@ -489,7 +489,17 @@
         }
     }
 
+    let isOrderSubmitting = false;
+
     function onProcessCheckoutSubmit(e) {
+        if (isOrderSubmitting) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            return false;
+        }
+
         const nameInput = document.getElementById('name');
         const phoneInput = document.getElementById('phone');
         const provinceSelect = document.getElementById('province_select');
@@ -527,6 +537,7 @@
         if (!streetVal) { isValid = false; if (streetInput) { streetInput.classList.add('is-invalid'); firstInvalidField = firstInvalidField || streetInput; } }
 
         if (!isValid) {
+            isOrderSubmitting = false;
             if (e) e.preventDefault();
             if (firstInvalidField) {
                 firstInvalidField.focus();
@@ -553,16 +564,23 @@
             }
         }
 
+        isOrderSubmitting = true;
+
         // Check payment method
         const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value;
         const submitBtn = document.getElementById('btn-submit-order');
 
         if (submitBtn) {
+            submitBtn.style.pointerEvents = 'none';
+            submitBtn.style.opacity = '0.7';
             if (selectedPayment === 'momo_atm' || selectedPayment === 'momo_cc' || selectedPayment === 'momo') {
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Đang kết nối cổng MoMo...';
             } else {
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý đơn hàng...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý đơn hàng, vui lòng đợi...';
             }
+            setTimeout(function() {
+                submitBtn.disabled = true;
+            }, 50);
         }
 
         return true;
