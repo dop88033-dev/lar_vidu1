@@ -158,9 +158,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Các Route công khai phục vụ Render & Cấu hình
 // ==========================================
 
-// Health Check cho Render
+// Health Check cho Render & Keep-alive cho MySQL (Aiven)
 Route::get('/up', function () {
-    return response('OK', 200);
+    $dbStatus = 'Connected';
+    try {
+        \Illuminate\Support\Facades\DB::select('SELECT 1');
+    } catch (\Throwable $e) {
+        $dbStatus = 'Error: ' . $e->getMessage();
+    }
+
+    return response()->json([
+        'status' => 'OK',
+        'database' => $dbStatus,
+        'timestamp' => now()->toIso8601String(),
+    ], 200);
 });
 
 // Xóa sạch cache
