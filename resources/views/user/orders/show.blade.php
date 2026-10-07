@@ -355,7 +355,7 @@
                     @if($order->status !== 'paid' && $order->status !== 'cod_ordered' && $order->status !== 'cancelled')
                         <div class="mt-4 pt-3 border-top">
                             <div class="text-center mb-3">
-                                <img src="https://developers.momo.vn/v3/assets/images/icon-52bd5d455b6e24b51f50b1df44e5a6d0.png" alt="MoMo" style="width: 36px; height: 36px; border-radius: 8px;" class="mb-2">
+                                <img src="{{ asset('images/momo-logo.png') }}" alt="MoMo" style="width: 40px; height: 40px; object-fit: contain;" class="mb-2">
                                 <h6 class="font-weight-bold text-dark mb-1">Thanh toán qua MoMo</h6>
                                 <small class="text-muted">Chọn phương thức thanh toán bên dưới</small>
                             </div>
