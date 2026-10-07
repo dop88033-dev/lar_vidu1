@@ -334,6 +334,25 @@
             right: 25px;
             z-index: 9999;
         }
+        #admin-chat-box #chat-toggle {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 13.5px;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #admin-chat-box #chat-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px -5px rgba(79, 70, 229, 0.55);
+            color: #ffffff;
+        }
         #admin-chat-box #chat-popup {
             width: 380px;
             height: 480px;
@@ -383,7 +402,7 @@
     </style>
 
     <div id="admin-chat-box">
-        <button id="chat-toggle" class="btn btn-dark shadow rounded-pill px-3 py-2 font-weight-bold">💬 Chat Khách hàng</button>
+        <button id="chat-toggle" type="button"><i class="fas fa-comment-dots"></i> <span>Chat Khách hàng</span></button>
         <div id="chat-popup" class="card shadow-lg">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2">
                 <strong><i class="fas fa-comments mr-1"></i> Hỗ trợ trực tuyến</strong>
