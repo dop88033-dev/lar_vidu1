@@ -58,7 +58,7 @@ Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(fu
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{order}/push-ghn', [OrderController::class, 'pushGhn'])->name('orders.push_ghn');
-    Route::get('/orders/{order}/pay/momo/{type}', [MomoController::class, 'payAgain'])->name('orders.momo.pay')->where('type', 'atm|cc');
+    Route::get('/orders/{order}/pay/momo/{type?}', [MomoController::class, 'payAgain'])->name('orders.momo.pay');
     Route::get('/orders/{order}/start-momo', [MomoController::class, 'start'])->name('orders.momo.start');
 
     Route::post('/chat/send', [UserChatController::class, 'send'])->name('chat.send');
