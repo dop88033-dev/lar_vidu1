@@ -22,9 +22,7 @@ class MomoService
         $ipnUrl = config('services.momo.ipn_url') ?: route('payment.momo.ipn');
         $extraData = (string) $order->id;
         $requestId = (string) time();
-        if ($order->payment_method === 'momo_atm') {
-            $requestType = 'payWithATM';
-        } elseif ($order->payment_method === 'momo_cc') {
+        if ($order->payment_method === 'momo_cc') {
             $requestType = 'payWithCC';
         } else {
             $requestType = config('services.momo.request_type', 'payWithMethod');

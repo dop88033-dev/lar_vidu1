@@ -158,7 +158,7 @@ class OrderController extends Controller
         try {
             // Chống đặt trùng đơn: Kiểm tra nếu trong 10 giây qua user này vừa tạo đơn
             $recentOrder = Order::where('user_id', $userId)
-                ->where('created_at', '>=', now()->subSeconds(10))
+                ->where('created_at', '>=', now()->subSeconds(3))
                 ->latest()
                 ->first();
 
