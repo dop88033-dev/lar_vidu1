@@ -138,8 +138,11 @@
                                         <a href="{{ route('user.orders.momo.pay', [$order, 'atm']) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mr-1 mb-1" style="background: linear-gradient(135deg, #005baa, #0078d4); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(0, 91, 170, 0.25);">
                                             <i class="fas fa-credit-card mr-1"></i> Thẻ Nội Địa (ATM)
                                         </a>
-                                        <a href="{{ route('user.orders.momo.pay', [$order, 'cc']) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mb-1" style="background: linear-gradient(135deg, #a50064, #d82d8b); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(165, 0, 100, 0.25);">
+                                        <a href="{{ route('user.orders.momo.pay', [$order, 'cc']) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mr-1 mb-1" style="background: linear-gradient(135deg, #a50064, #d82d8b); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(165, 0, 100, 0.25);">
                                             <i class="fab fa-cc-visa mr-1"></i> VISA / Master
+                                        </a>
+                                        <a href="{{ route('user.orders.simulate_paid', $order) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mb-1" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);" title="Nhấn để kích hoạt trạng thái Đã Thanh Toán và tạo Vận đơn GHN tức thì">
+                                            <i class="fas fa-check-circle mr-1"></i> Bật Đã Thanh Toán (Test)
                                         </a>
                                     @endif
                                 </div>

@@ -60,6 +60,7 @@ Route::middleware(['auth', 'verified'])->prefix('user')->name('user.')->group(fu
     Route::post('/orders/{order}/push-ghn', [OrderController::class, 'pushGhn'])->name('orders.push_ghn');
     Route::get('/orders/{order}/pay/momo/{type?}', [MomoController::class, 'payAgain'])->name('orders.momo.pay');
     Route::get('/orders/{order}/start-momo', [MomoController::class, 'start'])->name('orders.momo.start');
+    Route::get('/orders/{order}/simulate-paid', [MomoController::class, 'simulatePaid'])->name('orders.simulate_paid');
 
     Route::post('/chat/send', [UserChatController::class, 'send'])->name('chat.send');
     Route::get('/chat/messages', [UserChatController::class, 'getMessages'])->name('chat.messages');
