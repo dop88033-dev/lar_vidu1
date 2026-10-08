@@ -24,8 +24,10 @@ class MomoService
         $requestId = (string) time();
         if ($order->payment_method === 'momo_atm') {
             $requestType = 'payWithATM';
-        } else {
+        } elseif ($order->payment_method === 'momo_cc') {
             $requestType = 'payWithCC';
+        } else {
+            $requestType = config('services.momo.request_type', 'payWithMethod');
         }
 
         $rawHash = 'accessKey=' . $accessKey .
