@@ -39,14 +39,23 @@ class AuthController extends Controller
             'role'     => 'customer', // hoặc 'user' tùy theo cơ sở dữ liệu của bạn
         ]);
 
-        // Gửi email xác thực
-        $user->sendEmailVerificationNotification();
+        // Gửi email xác thực tài khoản qua event Registered
+        try {
+            event(new \Illuminate\Auth\Events\Registered($user));
+        } catch (\Throwable $e) {
+            Log::error('Lỗi khi gửi mail xác thực đăng ký: ' . $e->getMessage());
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $ex) {
+                Log::error('Direct email verification send failed: ' . $ex->getMessage());
+            }
+        }
 
         // Đăng nhập tự động để phiên xác thực hoạt động
         Auth::login($user);
 
         return redirect()->route('verification.notice')
-            ->with('success', 'Vui lòng kiểm tra email để xác thực tài khoản.');
+            ->with('success', 'Đăng ký thành công! Hệ thống đã gửi email xác thực đến địa chỉ ' . $user->email . '. Vui lòng kiểm tra hòm thư.');
     }
 
     // Hiển thị form đăng nhập
