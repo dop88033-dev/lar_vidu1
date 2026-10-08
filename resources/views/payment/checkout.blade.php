@@ -183,11 +183,12 @@
                                     <p class="font-weight-bold text-dark mb-2">
                                         <i class="fas fa-university text-primary mr-1"></i> Thông tin thẻ ATM thử nghiệm (MoMo Test Sandbox):
                                     </p>
-                                    <ul class="mb-0 text-dark small pl-3">
-                                        <li><strong>Số thẻ:</strong> <code>9704000000000018</code></li>
-                                        <li><strong>Ngày phát hành:</strong> <code>03/07</code></li>
+                                    <ul class="mb-2 text-dark small pl-3">
+                                        <li><strong>Số thẻ Saigonbank:</strong> <code>9704000000000018</code> (hoặc Thẻ NCB: <code>9704198526191432198</code>)</li>
+                                        <li><strong>Ngày phát hành:</strong> <code>03/07</code> (hoặc <code>07/15</code>)</li>
                                         <li><strong>Tên chủ thẻ:</strong> <code>NGUYEN VAN A</code></li>
-                                        <li><strong>Mã OTP / Số ĐT:</strong> <code>123456</code> (Không nhập số điện thoại cá nhân để tránh đơ nút thanh toán)</li>
+                                        <li><strong>Số điện thoại test MoMo:</strong> <code class="text-danger font-weight-bold">0984123456</code> (Bắt buộc dùng SĐT test này, không nhập SĐT cá nhân)</li>
+                                        <li><strong>Mã OTP:</strong> <code>123456</code></li>
                                     </ul>
                                 </div>
                             </div>
