@@ -192,4 +192,38 @@ class MomoController extends Controller
             $momo->markFailed($transaction, $payload);
         }
     }
+
+    public function simulatePaid(Order $order, GHNOrderService $ghnOrders)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $transaction = PaymentTransaction::firstOrCreate([
+            'order_id' => $order->id,
+            'gateway' => 'momo',
+        ], [
+            'amount' => $order->total_price,
+            'status' => 'pending',
+            'gateway_order_id' => 'SIMULATE_' . $order->id . '_' . time(),
+        ]);
+
+        $order->update(['status' => 'paid', 'shipping_status' => 'processing']);
+        $transaction->update([
+            'status' => 'paid',
+            'paid_at' => now(),
+            'message' => 'Simulated Test Payment Success',
+        ]);
+
+        $response = $ghnOrders->create($order, true);
+        if (isset($response['code']) && $response['code'] === 200) {
+            $order->update([
+                'ghn_order_code' => $response['data']['order_code'],
+                'shipping_status' => 'ready_to_pick',
+            ]);
+            return redirect()->route('user.orders.index')->with('success', 'Xác nhận thanh toán thành công! Vận đơn GHN ' . $response['data']['order_code'] . ' đã được khởi tạo.');
+        }
+
+        return redirect()->route('user.orders.index')->with('success', 'Đơn hàng #' . $order->id . ' đã được đánh dấu là Đã thanh toán (Paid).');
+    }
 }
