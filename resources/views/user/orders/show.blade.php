@@ -365,7 +365,7 @@
                             <a href="{{ route('user.orders.momo.pay', [$order, 'atm']) }}" class="btn btn-block py-3 font-weight-bold rounded-lg text-white mb-2 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #005baa, #0078d4); border: none; box-shadow: 0 3px 10px rgba(0, 91, 170, 0.3); transition: all 0.2s;">
                                 <i class="fas fa-credit-card mr-2" style="font-size: 18px;"></i>
                                 <div class="text-left">
-                                    <span class="d-block" style="font-size: 14px;">Thẻ Nội Địa (ATM)</span>
+                                    <span class="d-block" style="font-size: 14px;">Thẻ Nội Địa (ATM Napas)</span>
                                     <small class="d-block" style="opacity: 0.8; font-size: 11px;">Napas, Vietcombank, BIDV, ...</small>
                                 </div>
                             </a>

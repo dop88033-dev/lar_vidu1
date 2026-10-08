@@ -168,24 +168,27 @@
                             </div>
                         </div>
 
-                        <!-- Option 1: Thanh toán bằng thẻ ATM -->
+                        <!-- Option 1: Thanh toán bằng thẻ ATM Nội Địa Napas -->
                         <div class="custom-control custom-radio border rounded-lg p-3 mb-3 payment-option cursor-pointer" style="background-color: #ffffff; transition: all 0.2s;" id="opt-momo-atm" onclick="selectPaymentMethod('momo_atm')">
                             <input type="radio" id="payment_momo_atm" name="payment_method" value="momo_atm" class="custom-control-input" onchange="togglePaymentMethod('momo_atm')">
                             <label class="custom-control-label font-weight-bold text-dark cursor-pointer d-flex align-items-center justify-content-between" for="payment_momo_atm">
                                 <span>
                                     <i class="fas fa-credit-card text-primary mr-2 font-size-18"></i> 
-                                    Thanh toán bằng thẻ ATM
+                                    Thanh toán bằng thẻ ATM Nội Địa (Napas)
                                 </span>
                                 <span class="badge text-white px-2 py-1" style="background-color: #005baa;">Thẻ Nội Địa Napas (MoMo)</span>
                             </label>
                             <div class="pl-4 mt-3 d-none" id="momo-atm-detail">
                                 <div class="bg-light p-3 rounded-lg border">
                                     <p class="font-weight-bold text-dark mb-2">
-                                        <i class="fas fa-university text-primary mr-1"></i> Cổng thanh toán Thẻ ATM Nội Địa Napas (MoMo Sandbox).
+                                        <i class="fas fa-university text-primary mr-1"></i> Thông tin thẻ ATM thử nghiệm (MoMo Test Sandbox):
                                     </p>
-                                    <div class="text-muted small">
-                                        Hệ thống sẽ chuyển tiếp bạn sang giao diện thanh toán an toàn của MoMo để thực hiện giao dịch.
-                                    </div>
+                                    <ul class="mb-0 text-dark small pl-3">
+                                        <li><strong>Số thẻ:</strong> <code>9704000000000018</code></li>
+                                        <li><strong>Ngày phát hành:</strong> <code>03/07</code></li>
+                                        <li><strong>Tên chủ thẻ:</strong> <code>NGUYEN VAN A</code></li>
+                                        <li><strong>Mã OTP / Số ĐT:</strong> <code>123456</code> (Không nhập số điện thoại cá nhân để tránh đơ nút thanh toán)</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -197,18 +200,21 @@
                                 <span>
                                     <i class="fab fa-cc-visa text-danger mr-1 font-size-18"></i> 
                                     <i class="fab fa-cc-mastercard text-warning mr-2 font-size-18"></i>
-                                    Thanh toán bằng VISA/Master/JCB
+                                    Thanh toán bằng thẻ VISA / Mastercard / JCB
                                 </span>
                                 <span class="badge text-white px-2 py-1" style="background-color: #a50064;">Thẻ Quốc Tế (MoMo)</span>
                             </label>
                             <div class="pl-4 mt-3 d-none" id="momo-cc-detail">
                                 <div class="bg-light p-3 rounded-lg border">
                                     <p class="font-weight-bold text-dark mb-2">
-                                        <i class="fas fa-globe text-danger mr-1"></i> Cổng thanh toán Thẻ Quốc Tế Visa/Mastercard/JCB (MoMo Sandbox).
+                                        <i class="fas fa-globe text-danger mr-1"></i> Thông tin thẻ Quốc Tế thử nghiệm (MoMo Sandbox):
                                     </p>
-                                    <div class="text-muted small">
-                                        Hệ thống sẽ chuyển tiếp bạn sang giao diện thanh toán an toàn của MoMo để thực hiện giao dịch.
-                                    </div>
+                                    <ul class="mb-0 text-dark small pl-3">
+                                        <li><strong>Số thẻ Visa:</strong> <code>4111111111111111</code></li>
+                                        <li><strong>Ngày hết hạn:</strong> <code>12/25</code></li>
+                                        <li><strong>Mã CVV/CVC:</strong> <code>123</code></li>
+                                        <li><strong>Tên chủ thẻ:</strong> <code>NGUYEN VAN A</code></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

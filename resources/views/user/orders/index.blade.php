@@ -136,7 +136,7 @@
 
                                     @if($order->status !== 'paid' && $order->status !== 'cod_ordered' && $order->status !== 'cancelled')
                                         <a href="{{ route('user.orders.momo.pay', [$order, 'atm']) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mr-1 mb-1" style="background: linear-gradient(135deg, #005baa, #0078d4); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(0, 91, 170, 0.25);">
-                                            <i class="fas fa-credit-card mr-1"></i> Thẻ Nội Địa
+                                            <i class="fas fa-credit-card mr-1"></i> Thẻ Nội Địa (ATM)
                                         </a>
                                         <a href="{{ route('user.orders.momo.pay', [$order, 'cc']) }}" class="btn btn-sm font-weight-bold rounded-lg text-white mb-1" style="background: linear-gradient(135deg, #a50064, #d82d8b); border: none; font-size: 12px; padding: 6px 12px; box-shadow: 0 2px 6px rgba(165, 0, 100, 0.25);">
                                             <i class="fab fa-cc-visa mr-1"></i> VISA / Master
