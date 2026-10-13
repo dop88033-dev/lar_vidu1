@@ -341,16 +341,17 @@ class OrderController extends Controller
             abort(403);
         }
 
-        if ($order->status === 'cancelled') {
-            return back()->with('error', 'Đơn hàng này đã bị hủy từ trước.');
-        }
-
-        if ($order->status === 'delivered' || $order->shipping_status === 'delivered') {
-            return back()->with('error', 'Đơn hàng đã giao thành công không thể hủy.');
-        }
-
-        if ($order->status === 'paid') {
-            return back()->with('error', 'Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ.');
+        if (!$order->canBeCancelled()) {
+            if ($order->isDelivered()) {
+                return back()->with('error', 'Đơn hàng đã được giao thành công, không thể hủy.');
+            }
+            if ($order->status === 'cancelled') {
+                return back()->with('error', 'Đơn hàng này đã bị hủy từ trước.');
+            }
+            if ($order->status === 'paid') {
+                return back()->with('error', 'Không thể hủy đơn hàng đã thanh toán. Vui lòng liên hệ bộ phận hỗ trợ.');
+            }
+            return back()->with('error', 'Đơn hàng đang trong quá trình xử lý/giao hàng, không thể hủy.');
         }
 
         // Hủy đơn trên hệ thống GHN nếu đã có mã vận đơn
@@ -376,16 +377,14 @@ class OrderController extends Controller
             abort(403);
         }
 
-        if ($order->status === 'cancelled') {
-            return redirect()->route('user.orders.index')->with('error', 'Không thể chỉnh sửa đơn hàng đã bị hủy.');
-        }
-
-        if ($order->status === 'delivered' || $order->shipping_status === 'delivered') {
-            return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đã giao thành công không thể tự chỉnh sửa.');
-        }
-
-        if ($order->status === 'paid') {
-            return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đã thanh toán không thể tự chỉnh sửa.');
+        if (!$order->canBeEdited()) {
+            if ($order->isDelivered()) {
+                return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đã giao thành công, không thể chỉnh sửa thông tin.');
+            }
+            if ($order->status === 'cancelled') {
+                return redirect()->route('user.orders.index')->with('error', 'Không thể chỉnh sửa đơn hàng đã bị hủy.');
+            }
+            return redirect()->route('user.orders.index')->with('error', 'Đơn hàng đang được xử lý/giao hàng, không thể chỉnh sửa thông tin.');
         }
 
         return view('user.orders.edit', compact('order'));
@@ -397,8 +396,8 @@ class OrderController extends Controller
             abort(403);
         }
 
-        if (in_array($order->status, ['cancelled', 'paid', 'delivered']) || $order->shipping_status === 'delivered') {
-            return redirect()->route('user.orders.index')->with('error', 'Không thể cập nhật đơn hàng này.');
+        if (!$order->canBeEdited()) {
+            return redirect()->route('user.orders.index')->with('error', 'Không thể cập nhật thông tin cho đơn hàng này.');
         }
 
         $request->validate([

@@ -24,16 +24,25 @@
             <button type="button" onclick="if(typeof openChatWithOrder === 'function') openChatWithOrder({{ $order->id }});" class="btn btn-dark btn-sm font-weight-bold rounded-lg mr-2">
                 <i class="fas fa-comments mr-1"></i> Trò chuyện về đơn hàng
             </button>
-            @if($order->status !== 'paid' && $order->status !== 'cancelled')
+            @if($order->canBeEdited())
                 <a href="{{ route('user.orders.edit', $order) }}" class="btn btn-outline-warning btn-sm font-weight-bold rounded-lg mr-2">
                     <i class="fas fa-pen mr-1"></i> Sửa thông tin
                 </a>
+            @endif
+
+            @if($order->canBeCancelled())
                 <form action="{{ route('user.orders.cancel', $order) }}" method="POST" class="d-inline-block mr-2" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #{{ $order->id }}?');">
                     @csrf
                     <button type="submit" class="btn btn-outline-danger btn-sm font-weight-bold rounded-lg">
                         <i class="fas fa-times-circle mr-1"></i> Hủy đơn hàng
                     </button>
                 </form>
+            @endif
+
+            @if($order->isDelivered())
+                <span class="badge badge-success px-3 py-2 font-weight-bold rounded-lg mr-2" style="font-size: 13px;">
+                    <i class="fas fa-check-circle mr-1"></i> Đã giao hàng thành công
+                </span>
             @endif
             <a href="{{ route('user.orders.index') }}" class="btn btn-outline-secondary btn-sm font-weight-bold rounded-lg">
                 <i class="fas fa-arrow-left mr-1"></i> Trở về danh sách

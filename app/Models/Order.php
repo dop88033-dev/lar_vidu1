@@ -62,4 +62,49 @@ class Order extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    /**
+     * Kiểm tra xem đơn hàng đã giao thành công chưa
+     */
+    public function isDelivered(): bool
+    {
+        return $this->status === 'delivered' 
+            || $this->shipping_status === 'delivered';
+    }
+
+    /**
+     * Kiểm tra xem đơn hàng có thể hủy được hay không
+     */
+    public function canBeCancelled(): bool
+    {
+        // Đã hủy thì không hủy lại
+        if ($this->status === 'cancelled' || $this->shipping_status === 'cancelled') {
+            return false;
+        }
+
+        // Đã giao hàng thành công thì tuyệt đối không được hủy
+        if ($this->isDelivered()) {
+            return false;
+        }
+
+        // Đang vận chuyển, đã đóng gói, hoặc đã thanh toán thì không được hủy trực tiếp
+        if (in_array($this->status, ['shipping', 'packaged', 'paid', 'paid_momo', 'cod_paid'])) {
+            return false;
+        }
+
+        // Nếu trạng thái giao vận của GHN đã chuyển sang lấy hàng / đang giao
+        if (in_array($this->shipping_status, ['picking', 'picked', 'storing', 'transporting', 'sorting', 'delivering', 'delivered', 'return'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Kiểm tra xem khách hàng có được sửa thông tin đơn hay không
+     */
+    public function canBeEdited(): bool
+    {
+        return $this->canBeCancelled();
+    }
 }

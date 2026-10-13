@@ -109,14 +109,13 @@
                                         <i class="fas fa-eye mr-1"></i> Xem chi tiết
                                     </a>
 
-                                     @php
-                                         $cannotModifyUser = in_array($order->status, ['paid', 'cancelled', 'delivered', 'shipping', 'packaged']) || $order->shipping_status === 'delivered';
-                                     @endphp
-                                     @if(!$cannotModifyUser)
+                                     @if($order->canBeEdited())
                                          <a href="{{ route('user.orders.edit', $order) }}" class="btn btn-outline-warning btn-sm font-weight-bold rounded-lg mr-1 mb-1" style="font-size: 12px;">
                                              <i class="fas fa-pen mr-1"></i> Sửa
                                          </a>
+                                     @endif
 
+                                     @if($order->canBeCancelled())
                                          <form action="{{ route('user.orders.cancel', $order) }}" method="POST" class="d-inline-block mb-1 mr-1" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #{{ $order->id }}?');">
                                              @csrf
                                              <button type="submit" class="btn btn-outline-danger btn-sm font-weight-bold rounded-lg" style="font-size: 12px;">
