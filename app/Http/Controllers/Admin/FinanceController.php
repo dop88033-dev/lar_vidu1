@@ -206,6 +206,10 @@ class FinanceController extends Controller
                 throw ValidationException::withMessages(['payment_status' => 'Không thể xác nhận thu tiền cho đơn đã hủy hoặc hoàn hàng.']);
             }
 
+            if ($newStatus === 'paid' && !$order->isDelivered()) {
+                throw ValidationException::withMessages(['payment_status' => 'Chỉ được xác nhận "Đã thu tiền" khi đơn hàng đã giao thành công cho khách hàng.']);
+            }
+
             $attributes = [
                 'status' => $newStatus,
                 'message' => 'Quản trị viên #'.$request->user()->id.' cập nhật: '.self::STATUSES[$newStatus],

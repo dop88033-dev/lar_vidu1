@@ -254,12 +254,28 @@
                                                             <strong>Tổng số tiền:</strong> {{ number_format($order->total_price) }} đ
                                                         </div>
 
+                                                        @php
+                                                            $isDelivered = ($order->status === 'delivered') || ($order->shipping_status === 'delivered');
+                                                        @endphp
+
+                                                        @if(!$isDelivered)
+                                                            <div class="alert alert-warning py-2 px-3 small mb-3 border-0" style="background-color: #fffbeb; color: #b45309; border-radius: 8px;">
+                                                                <i class="fas fa-exclamation-triangle mr-1"></i> <strong>Lưu ý:</strong> Đơn hàng chưa giao thành công. Chỉ có thể xác nhận <strong>"Đã thu tiền"</strong> sau khi đơn hàng được giao thành công cho khách hàng.
+                                                            </div>
+                                                        @endif
+
                                                         <div class="form-group mb-3">
                                                             <label class="small font-weight-bold text-secondary">Trạng Thái Thanh Toán Mới</label>
                                                             <select name="payment_status" class="form-control custom-select">
                                                                 @foreach($allowedTransitions as $statusKey)
-                                                                    <option value="{{ $statusKey }}" {{ $order->payment_status === $statusKey ? 'selected' : '' }}>
+                                                                    @php
+                                                                        $cannotPayYet = ($statusKey === 'paid' && !$isDelivered);
+                                                                    @endphp
+                                                                    <option value="{{ $statusKey }}" {{ $order->payment_status === $statusKey ? 'selected' : '' }} {{ $cannotPayYet ? 'disabled' : '' }}>
                                                                         {{ $codStatusLabels[$statusKey] ?? $statuses[$statusKey] ?? $statusKey }}
+                                                                        @if($cannotPayYet)
+                                                                            (Chỉ khả dụng khi đã giao hàng)
+                                                                        @endif
                                                                     </option>
                                                                 @endforeach
                                                             </select>
