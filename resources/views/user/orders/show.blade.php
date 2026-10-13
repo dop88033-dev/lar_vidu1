@@ -347,16 +347,36 @@
             <div class="card card-custom border-0 shadow-sm rounded-lg mb-4">
                 <div class="card-body p-4">
                     <h6 class="font-weight-bold text-dark mb-3 border-bottom pb-2">Tóm tắt thanh toán</h6>
-                    <div class="d-flex justify-content-between mb-2 text-muted">
+                    <div class="d-flex justify-content-between align-items-center mb-2 text-muted">
                         <span>Trạng thái đơn hàng:</span>
-                        @if($order->status === 'paid')
-                            <span class="badge badge-success px-2 py-1">Đã thanh toán</span>
+                        @if($order->isDelivered())
+                            <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i> Đã giao hàng</span>
+                        @elseif($order->status === 'shipping' || $order->shipping_status === 'delivering')
+                            <span class="badge badge-primary px-2 py-1"><i class="fas fa-truck mr-1"></i> Đang vận chuyển</span>
+                        @elseif($order->status === 'packaged')
+                            <span class="badge badge-info px-2 py-1"><i class="fas fa-box-open mr-1"></i> Đã đóng gói</span>
+                        @elseif($order->status === 'cancelled')
+                            <span class="badge badge-danger px-2 py-1"><i class="fas fa-times-circle mr-1"></i> Đã hủy</span>
+                        @elseif($order->isPaid())
+                            <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i> Đã thanh toán</span>
                         @elseif($order->status === 'cod_ordered')
-                            <span class="badge badge-info px-2 py-1">Đã đặt COD</span>
+                            <span class="badge badge-info px-2 py-1"><i class="fas fa-hand-holding-usd mr-1"></i> Đã đặt (COD)</span>
                         @else
-                            <span class="badge badge-warning text-dark px-2 py-1">Chờ thanh toán</span>
+                            <span class="badge badge-warning text-dark px-2 py-1"><i class="fas fa-clock mr-1"></i> Đang xử lý</span>
                         @endif
                     </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2 text-muted">
+                        <span>Tình trạng thanh toán:</span>
+                        @if($order->isPaid())
+                            <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i> Đã thanh toán</span>
+                        @elseif($order->payment_method === 'cod' || $order->status === 'cod_ordered')
+                            <span class="badge badge-info px-2 py-1"><i class="fas fa-money-bill-wave mr-1"></i> Thu tiền khi nhận (COD)</span>
+                        @else
+                            <span class="badge badge-warning text-dark px-2 py-1"><i class="fas fa-clock mr-1"></i> Chưa thanh toán</span>
+                        @endif
+                    </div>
+
                     <div class="d-flex justify-content-between align-items-center pt-2 border-top">
                         <span class="font-weight-bold text-dark">Tổng tiền:</span>
                         <span class="font-weight-bold h4 mb-0 text-purple" style="color: #6366f1;">
@@ -364,7 +384,7 @@
                         </span>
                     </div>
 
-                    @if($order->status !== 'paid' && $order->status !== 'cod_ordered' && $order->status !== 'cancelled')
+                    @if($order->canBePaid())
                         <div class="mt-4 pt-3 border-top">
                             <div class="text-center mb-3">
                                 <img src="{{ asset('images/momo-logo.png') }}" alt="MoMo" style="width: 40px; height: 40px; object-fit: contain;" class="mb-2">
@@ -385,6 +405,13 @@
                                     <small class="d-block" style="opacity: 0.8; font-size: 11px;">Thẻ quốc tế Visa, Mastercard, JCB</small>
                                 </div>
                             </a>
+                        </div>
+                    @elseif($order->isPaid())
+                        <div class="mt-3 p-3 bg-light rounded-lg text-center border">
+                            <span class="text-success font-weight-bold d-block">
+                                <i class="fas fa-check-circle mr-1"></i> Đã thanh toán thành công
+                            </span>
+                            <small class="text-muted">Đơn hàng đã được thanh toán an toàn qua MoMo.</small>
                         </div>
                     @endif
                 </div>

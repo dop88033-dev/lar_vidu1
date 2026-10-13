@@ -107,4 +107,47 @@ class Order extends Model
     {
         return $this->canBeCancelled();
     }
+
+    /**
+     * Kiểm tra xem đơn hàng đã được thanh toán hay chưa (qua status hoặc giao dịch thành công)
+     */
+    public function isPaid(): bool
+    {
+        if (in_array($this->status, ['paid', 'paid_momo', 'cod_paid'])) {
+            return true;
+        }
+
+        // Kiểm tra xem đã có giao dịch MoMo/Gateway nào được ghi nhận thành công (paid) chưa
+        return $this->paymentTransactions()
+            ->whereIn('status', ['paid', 'completed'])
+            ->exists();
+    }
+
+    /**
+     * Kiểm tra xem đơn hàng có cần/được phép thanh toán trực tuyến tiếp hay không
+     */
+    public function canBePaid(): bool
+    {
+        // Đã thanh toán rồi thì không thanh toán nữa
+        if ($this->isPaid()) {
+            return false;
+        }
+
+        // Đã giao hàng rồi thì không hiện nút thanh toán nữa
+        if ($this->isDelivered()) {
+            return false;
+        }
+
+        // Đã hủy thì không thanh toán
+        if ($this->status === 'cancelled' || $this->shipping_status === 'cancelled') {
+            return false;
+        }
+
+        // Nếu là COD thì thu tiền mặt lúc nhận hàng
+        if ($this->status === 'cod_ordered' || $this->payment_method === 'cod') {
+            return false;
+        }
+
+        return true;
+    }
 }
