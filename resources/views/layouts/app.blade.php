@@ -56,16 +56,24 @@
         .navbar-custom .nav-link {
             color: #94a3b8 !important;
             font-weight: 500;
-            font-size: 14.5px;
-            padding: 8px 16px !important;
+            font-size: 14px;
+            padding: 7px 12px !important;
+            white-space: nowrap !important;
             transition: all 0.2s;
-            border-radius: 6px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
         }
 
-        .navbar-custom .nav-link:hover, 
-        .navbar-custom .nav-link.active {
+        .navbar-custom .nav-link:hover {
             color: #ffffff !important;
             background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .navbar-custom .nav-link.active {
+            color: #ffffff !important;
+            background-color: rgba(99, 102, 241, 0.25) !important;
+            font-weight: 600;
         }
 
         .btn-purple {
@@ -123,9 +131,9 @@
 <body>
 
     <!-- NAVBAR CHÍNH -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{{ route('welcome') }}">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top py-2">
+        <div class="container-fluid px-lg-4" style="max-width: 1360px;">
+            <a class="navbar-brand mr-lg-3" href="{{ route('welcome') }}">
                 <span class="brand-logo-icon">P</span> PTShop
             </a>
 
@@ -136,7 +144,7 @@
 
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <!-- MENU BÊN TRÁI -->
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav mr-auto align-items-lg-center">
                     {{-- 1. Menu dùng chung --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('welcome') ? 'active' : '' }}" href="{{ route('welcome') }}">
@@ -151,7 +159,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center {{ request()->routeIs('user.cart.index') ? 'active' : '' }}" href="{{ route('user.cart.index') }}" id="cart-nav-link">
+                        <a class="nav-link {{ request()->routeIs('user.cart.index') ? 'active' : '' }}" href="{{ route('user.cart.index') }}" id="cart-nav-link">
                             <i class="fas fa-shopping-cart mr-1"></i> Giỏ hàng
                             <span id="cart-count-badge" class="badge badge-pill badge-danger ml-1" style="display: none; background-color: #ef4444; font-size: 11px;">0</span>
                         </a>
@@ -190,15 +198,15 @@
                 </ul>
 
                 <!-- FORM TÌM KIẾM SẢN PHẨM TOÀN TRANG -->
-                <form action="{{ route('user.categories.index') }}" method="GET" class="form-inline mx-auto my-2 my-lg-0 d-none d-md-flex">
-                    <div class="input-group" style="width: 260px;">
-                        <input class="form-control form-control-sm border-0 text-white" type="search" name="keyword" 
+                <form action="{{ route('user.categories.index') }}" method="GET" class="form-inline mx-lg-2 my-2 my-lg-0 d-none d-lg-flex" style="max-width: 240px;">
+                    <div class="input-group input-group-sm w-100">
+                        <input class="form-control border-0 text-white" type="search" name="keyword" 
                                placeholder="Tìm sản phẩm..." 
                                value="{{ request('keyword') }}" 
                                style="background: rgba(255, 255, 255, 0.12); border-radius: 20px 0 0 20px; font-size: 13px;">
                         <div class="input-group-append">
-                            <button class="btn btn-sm btn-purple px-3" type="submit" style="border-radius: 0 20px 20px 0;">
-                                <i class="fas fa-search" style="font-size: 12px;"></i>
+                            <button class="btn btn-purple px-3" type="submit" style="border-radius: 0 20px 20px 0;">
+                                <i class="fas fa-search" style="font-size: 11px;"></i>
                             </button>
                         </div>
                     </div>
