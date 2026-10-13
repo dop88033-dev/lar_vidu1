@@ -189,6 +189,21 @@
                     @endauth
                 </ul>
 
+                <!-- FORM TÌM KIẾM SẢN PHẨM TOÀN TRANG -->
+                <form action="{{ route('user.categories.index') }}" method="GET" class="form-inline mx-auto my-2 my-lg-0 d-none d-md-flex">
+                    <div class="input-group" style="width: 260px;">
+                        <input class="form-control form-control-sm border-0 text-white" type="search" name="keyword" 
+                               placeholder="Tìm sản phẩm..." 
+                               value="{{ request('keyword') }}" 
+                               style="background: rgba(255, 255, 255, 0.12); border-radius: 20px 0 0 20px; font-size: 13px;">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-purple px-3" type="submit" style="border-radius: 0 20px 20px 0;">
+                                <i class="fas fa-search" style="font-size: 12px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
                 <!-- MENU BÊN PHẢI (TÀI KHOẢN) -->
                 <ul class="navbar-nav ml-auto align-items-center">
                     @guest

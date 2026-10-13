@@ -8,9 +8,18 @@
         <div class="col-md-8 px-0">
             <h1 class="display-4 font-weight-bold">Chào mừng đến với PTShop</h1>
             <p class="lead my-3 text-light">Khám phá các sản phẩm chất lượng cao với giá ưu đãi tốt nhất.</p>
-            <a href="#product-list" class="btn btn-purple px-4 py-2 mt-2">
-                <i class="fas fa-shopping-bag mr-2"></i> Khám phá ngay
-            </a>
+            <form action="{{ route('user.categories.index') }}" method="GET" class="mt-3">
+                <div class="input-group" style="max-width: 520px;">
+                    <input type="text" name="keyword" class="form-control form-control-lg border-0 shadow-sm" 
+                           placeholder="Tìm kiếm sản phẩm, vợt, phụ kiện..." 
+                           style="border-radius: 30px 0 0 30px; font-size: 15px; padding-left: 20px;">
+                    <div class="input-group-append">
+                        <button class="btn btn-purple btn-lg px-4" type="submit" style="border-radius: 0 30px 30px 0;">
+                            <i class="fas fa-search mr-1"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 

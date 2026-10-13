@@ -55,7 +55,12 @@
                     </div>
 
                     <div class="form-group mb-4">
-                        <label for="password" class="font-weight-semibold text-dark">Mật khẩu</label>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="password" class="font-weight-semibold text-dark mb-0">Mật khẩu</label>
+                            <a href="{{ route('password.request') }}" class="small text-muted font-weight-medium">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text bg-light border-right-0"><i class="fas fa-lock text-muted"></i></span>

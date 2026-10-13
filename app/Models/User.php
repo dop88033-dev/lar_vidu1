@@ -47,4 +47,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->role === 'admin';
     }
+
+    /**
+     * Gửi thông báo đặt lại mật khẩu với giao diện tiếng Việt
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
 }
